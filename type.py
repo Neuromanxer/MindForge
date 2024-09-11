@@ -99,21 +99,21 @@ def ask():
     user_input = request.form.get('input', '')
     print(f"User Input: {user_input}")
 
-    # Create a message
+    #create a message
     message = client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
         content=user_input,
     )
 
-    # Create a run
+    #create a run
     run = client.beta.threads.runs.create(
         thread_id=thread.id,
         assistant_id=assistant_id,
     )
     print(f"Run ID: {run.id}")
 
-    # Wait for run to complete
+    #wait for run to complete
     run = wait_for_run_completion(thread.id, run.id)
 
     if run.status == 'failed':
@@ -123,16 +123,16 @@ def ask():
         run = submit_tool_outputs(thread.id, run.id, run.required_action.submit_tool_outputs.tool_calls)
         run = wait_for_run_completion(thread.id, run.id)
 
-    # Get messages from the thread
+    #get messages from the thread
     messages = client.beta.threads.messages.list(thread_id=thread.id)
     response_messages = [{"role": msg.role, "content": msg.content[0].text.value} for msg in messages]
     
-    # Print the response to the console
+    #print the response to the console
     print("Response Messages:")
     for message in response_messages:
         print(f"{message['role']}: {message['content']}")
 
-    # Render response in HTML
+    #render response in HTML
     response_html = "\n".join([f"{msg['role']}: {msg['content']}" for msg in response_messages])
     return render_template_string('''
         <form action="/ask" method="post">
