@@ -6,7 +6,7 @@ from langchain_openai import ChatOpenAI
 
 app = Flask(__name__)
 
-# Initialize OpenAI model once
+#initialize OpenAI model once
 openai_api_key = ###
 llm = ChatOpenAI(api_key=openai_api_key)
 
@@ -59,16 +59,16 @@ def generate_schedule():
 
     agent = SchedulingAgent(llm)
 
-    # Process each file and create a description
+    #process each file and create a description
     files_description = []
     for file_path in files:
         file_text = extract_text_from_pdf(file_path)
         file_description = f"File: {file_path}\nContent Preview: {file_text[:500]}..."  # Preview first 500 chars
         files_description.append(file_description)
 
-    # Generate schedule and time estimation
+    #generate schedule and time estimation
     schedule = agent.generate_schedule("\n".join(files_description), grade_level, task_difficulty)
     return jsonify({"schedule": schedule})
 
 if __name__ == "__main__":
-    app.run()  # Enable debug mode for detailed error logs
+    app.run()  #enable debug mode for detailed error logs
