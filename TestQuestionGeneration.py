@@ -68,7 +68,7 @@ def submit_tool_outputs(thread_id, run_id, tools_to_call):
         tool_outputs=tool_output_array
     )
 
-# Mock TestQuestionGeneratorAgent class
+#mock TestQuestionGeneratorAgent class
 class TestQuestionGeneratorAgent:
     def generate_test_questions(self, material, past_questions):
         # Mock implementation
@@ -81,7 +81,7 @@ def generate_test_questions():
     material = data.get('material', '')
     past_questions = data.get('past_questions', [])
 
-    # Create and use TestQuestionGeneratorAgent instance
+    #create and use TestQuestionGeneratorAgent instance
     agent = TestQuestionGeneratorAgent()
     new_questions = agent.generate_test_questions(material, past_questions)
 
@@ -92,20 +92,20 @@ def ask():
     app.logger.info(f"Received POST request for /ask")
     user_input = request.form.get('input', '')
 
-    # Create a message
+    #create a message
     message = client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
         content=user_input,
     )
 
-    # Create a run
+    #create a run
     run = client.beta.threads.runs.create(
         thread_id=thread.id,
         assistant_id=assistant_id,
     )
 
-    # Wait for run to complete
+    #wait for run to complete
     run = wait_for_run_completion(thread.id, run.id)
 
     if run.status == 'failed':
@@ -114,11 +114,11 @@ def ask():
         run = submit_tool_outputs(thread.id, run.id, run.required_action.submit_tool_outputs.tool_calls)
         run = wait_for_run_completion(thread.id, run.id)
 
-    # Get messages from the thread
+    #get messages from the thread
     messages = client.beta.threads.messages.list(thread_id=thread.id)
     response_messages = [{"role": msg.role, "content": msg.content[0].text.value} for msg in messages]
 
-    # Render response in HTML
+    #render response in HTML
     response_html = "\n".join([f"{msg['role']}: {msg['content']}" for msg in response_messages])
     return render_template_string('''
         <form action="/ask" method="post">
